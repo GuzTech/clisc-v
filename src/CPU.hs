@@ -164,7 +164,7 @@ cpu ( regs
 
 cpuM = mealy cpu ((repeat 0) :: RegFile, 0, ADDI, 0, Nothing, Nothing, False, 0, 0)
 
-test_cpuM = printX $ L.take 10 $ simulate_lazy cpuM [
+test_cpuM = printX $ L.take 10 $ simulate_lazy @System cpuM [
   (Nothing, Nothing),
   (Nothing, Nothing),
   (Just 0b00000000000100001000000010010011, Nothing),

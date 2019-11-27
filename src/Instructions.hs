@@ -67,7 +67,7 @@ data Instr
   | FENCE_I
   | ECALL
   | EBREAK
-  deriving (Show, Eq, Generic, NFData, ShowX)
+  deriving (Show, Eq, Generic, NFData, ShowX, NFDataX)
 
 data InstrType
   = R_TYPE
@@ -77,7 +77,7 @@ data InstrType
   | U_TYPE
   | J_TYPE
   | F_TYPE -- FENCE | FENCE.I
-  deriving (Show, Eq, Generic, NFData, ShowX)
+  deriving (Show, Eq, Generic, NFData, ShowX, NFDataX)
 
 decodeInstr
   :: BitVector NumBits

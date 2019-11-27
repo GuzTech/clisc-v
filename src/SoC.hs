@@ -44,10 +44,10 @@ soc_inst = soc cpuM memory memory
     }
   ) #-}
 topEntity
-  :: Clock System Source
-  -> Reset System Synchronous
+  :: Clock System
+  -> Reset System
   -> Signal System (Maybe U32, Instr, Maybe U32, RegFile)
-topEntity = exposeClockReset soc_inst
+topEntity clk rst = exposeClockResetEnable soc_inst clk rst enableGen
   
 main = do
   putStrLn "(imem_addr:4),(raw_instr:32),(dmem_addr:-1),(regs:-1)"
