@@ -13,6 +13,6 @@ The following instructions have not yet been implemented:
 
 The memory access subsystem has also not been implemented yet. The other instructions are implemented but have not been extensively tested. The goal is to use CLaSH to generate Verilog and use [SymbiYosys](https://github.com/YosysHQ/SymbiYosys) and [riscv-formal](https://github.com/cliffordwolf/riscv-formal) to formally verify the core.
 
-## Licence
+## License
 
 CLISC-V is free and open hardware and is licensed under the [ISC licence](http://en.wikipedia.org/wiki/ISC_license).
