@@ -14,9 +14,14 @@
 -- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 -- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+{-# LANGUAGE DeriveAnyClass        #-}
+{-# LANGUAGE DeriveGeneric         #-}
+
 module Instructions where
 
 import Clash.Prelude
+import GHC.Generics
+import Control.DeepSeq
 
 import Types
 
@@ -62,13 +67,7 @@ data Instr
   | FENCE_I
   | ECALL
   | EBREAK
-  | CSRRW
-  | CSRRS
-  | CSRRC
-  | CSRRWI
-  | CSRRSI
-  | CSRRCI
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic, NFData, ShowX)
 
 data InstrType
   = R_TYPE
@@ -78,7 +77,7 @@ data InstrType
   | U_TYPE
   | J_TYPE
   | F_TYPE -- FENCE | FENCE.I
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic, NFData, ShowX)
 
 decodeInstr
   :: BitVector NumBits
@@ -138,22 +137,16 @@ decodeInstr i = o where
       0b000 -> case bit20 of
         0 -> (ECALL,  I_TYPE)
         1 -> (EBREAK, I_TYPE)
-      0b001 -> (CSRRW,  I_TYPE)
-      0b010 -> (CSRRS,  I_TYPE)
-      0b011 -> (CSRRC,  I_TYPE)
-      0b101 -> (CSRRWI, I_TYPE)
-      0b110 -> (CSRRSI, I_TYPE)
-      0b111 -> (CSRRCI, I_TYPE)
 
 decodeStage
-  :: BitVector NumBits       -- Raw BitVector of instruction
-  -> InstrType               -- Instruction type
-  -> RegFile                 -- Register file
-  -> (Reg, Reg, Reg, RegIdx) -- (rs1, rs2, imm, rd_idx)
-decodeStage i iType regs = (rs1, rs2, imm, rd_idx) where
+  :: BitVector NumBits                        -- Raw BitVector of instruction
+  -> InstrType                                -- Instruction type
+  -> RegFile                                  -- Register file
+  -> (Reg, Reg, Reg, RegIdx, RegIdx, RegIdx)  -- (rs1, rs2, imm, rs1_idx, rs2_idx, rd_idx)
+decodeStage i iType regs = (rs1, rs2, imm, rs1_idx, rs2_idx, rd_idx) where
   -- Register indices
-  rs1_idx = slice d19 d15 $ pack i
-  rs2_idx = slice d24 d20 $ pack i
+  rs1_idx = unpack (slice d19 d15 $ pack i)
+  rs2_idx = unpack (slice d24 d20 $ pack i)
   rd_idx  = (unpack $ slice d11 d7 i) :: RegIdx
   -- Register values
   rs1 = regs !! rs1_idx
@@ -171,4 +164,3 @@ decodeStage i iType regs = (rs1, rs2, imm, rd_idx) where
     B_TYPE -> immB
     U_TYPE -> immU
     J_TYPE -> immJ
-

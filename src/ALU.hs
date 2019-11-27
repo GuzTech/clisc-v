@@ -33,6 +33,7 @@ alu (instr, (rs1, rs2, imm, rd_idx)) = rd where
   rs2u = sToU rs2
   immu = sToU imm
   rd = case instr of
+    LUI   -> imm
     ADDI  -> rs1 + imm
     SLTI  -> unpack $ boolToBV $ rs1 < imm
     SLTIU -> unpack $ boolToBV $ rs1u < immu
